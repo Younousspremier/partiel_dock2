@@ -1,0 +1,40 @@
+services:
+  frontend:
+    image: younouss1/partiel_dock2:frontend
+    ports:
+      - "8082:80"
+    networks:
+      - app-network
+    depends_on:
+      - backend
+
+  backend:
+    image: younouss1/partiel_dock2:backend
+    ports:
+      - "8083:80"
+    networks:
+      - app-network
+    environment:
+      DB_HOST: db
+      DB_DATABASE: bdd_docker
+      DB_USER: root
+      DB_PASSWORD: root
+    depends_on:
+      - db
+
+  db:
+    image: younouss1/partiel_dock2:mysql-5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bdd_docker
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./bdd_docker.sql:/docker-entrypoint-initdb.d/bdd_docker.sql
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
